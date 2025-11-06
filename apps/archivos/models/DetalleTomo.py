@@ -9,7 +9,7 @@ class DetalleTomo(models.Model):
         ('adjunto', 'Adjunto'),
         ('no adjunto', 'No Adjunto')
     )
-    nro_doc = models.SmallIntegerField(blank=False, null=False)
+    nro_doc = models.SmallIntegerField(blank=True, null=True)
     nombre_archivo = models.CharField(max_length=200, blank=False, null=False)
     fecha_adjunto = models.DateTimeField(auto_now_add=True)
     nro_fojas = models.SmallIntegerField(blank=True, null=True)
