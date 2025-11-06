@@ -1,0 +1,126 @@
+[
+    {
+        "cargo": "Gerente",
+        "departamento":"Gerencia General",
+        "unidad": "Gerente General",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Asesor",
+        "departamento": "Gerencia General",
+        "unidad": "Asesor Legal",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Auditor",
+        "departamento": "Gerencia General",
+        "unidad": "Auditoría",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Secretaria",
+        "departamento": "Gerencia General",
+        "unidad": "Secretaria Ejecutiva",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Jefe Departamento de Administración y Finanzas",
+        "departamento": "Gerencia General",
+        "unidad": "Jefe Departamento de Administración y Finanzas",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Jefe Departamento de Operaciones",
+        "departamento": "Gerencia General",
+        "unidad": "Jefe Departamento de Operaciones",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Jefe Departamento de Operaciones Terminal de Buses Oruro",
+        "departamento": "Gerencia General",
+        "unidad": "Jefe Departamento de Operaciones Terminal de Buses Oruro",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Encargado Area de Mantenimiento y Reparación",
+        "departamento": "Gerencia General",
+        "unidad": "Encargado Area de Mantenimiento y Reparación",
+        "rol": "solicitante"
+    },
+
+    {
+        "cargo": "Encargado de Contabilidad General",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Contabilidad General",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 de Recursos Humanos y Normas",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Recursos Humanos y Normas",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 de Activos Fijos y Almacenes",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Activos Fijos y Almacenes",
+        "rol": "encargado activos fijos y almacen"
+    },
+    {
+        "cargo": "Profesional 1 de Contrataciones",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Contrataciones",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 Técnico de Tesorería",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Tesorería",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 Técnico de Cobranzas",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Cobranzas",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 Sistemas Informáticos y Redes",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Sistemas Informáticos y Redes",
+        "rol": "encargado de sistemas"
+    },
+    {
+        "cargo": "Profesional 1 Técnico de Presupuestos",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Presupuestos",
+        "rol": "solicitante"
+    },
+    {
+        "cargo": "Profesional 1 de Archivos y Ujier",
+        "departamento": "Jefatura Departamento de Administración y Finanzas",
+        "unidad": "Archivos y Ujier",
+        "rol": "encargado archivos y ujier"
+    },
+
+    {
+        "cargo": "Técnico Operador de Mantenimiento",
+        "departamento": "Area de Mantenimiento",
+        "unidad": "Mantenimiento",
+        "rol": "solicitante"
+    },
+
+    {
+        "cargo": "Operador de Operaciones Hotel",
+        "departamento": "Jefatura Departamento de Operaciones Hotel",
+        "unidad": "Operaciones Hotel",
+        "rol": "solicitante"
+    },
+
+    {
+        "cargo": "Operador de Operaciones Terminal",
+        "departamento": "Jefatura Departamento de Operaciones Terminal de Buses Oruro",
+        "unidad": "Operaciones Terminal",
+        "rol": "solicitante"
+    }
+]

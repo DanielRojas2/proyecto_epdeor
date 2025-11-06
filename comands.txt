@@ -2,5 +2,11 @@ pip install -r requirements.txt
 
 python manage.py makemigrations
 python manage.py migrate
+
+python manage.py poblar_departamentos "apps\usuarios\fixtures\departamentos.json"
+python manage.py poblar_unidades "apps\usuarios\fixtures\unidades.json"
+python manage.py poblar_roles "apps\usuarios\fixtures\roles.json"
+python manage.py poblar_cargos "apps\usuarios\fixtures\cargos.json"
+
 python manage.py createsuperuser
 python manage.py runserver
