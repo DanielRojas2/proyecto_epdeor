@@ -1,43 +1,30 @@
 from django.db import models
-from ...inventarios.models.AsignacionTomo import AsignacionTomo
 from .PrestamoTomo import PrestamoTomo
+from ...inventarios.models.AsignacionTomo import AsignacionTomo
 
 class DetallePrestamo(models.Model):
-    ESTADO_TOMO = (
+    ESTADO_DETALLE_TOMO_PRESTAMO = (
         ('pendiente', 'Pendiente'),
         ('prestado', 'Prestado'),
-        ('devuelto', 'Devuelto'),
-        ('retrasado', 'Retrasado'),
-        ('dañado', 'Dañado'),
+        ('devuelto', 'Devuelto')
     )
-
-    tomo = models.ForeignKey(AsignacionTomo, on_delete=models.CASCADE)
-    prestamo = models.ForeignKey(PrestamoTomo, on_delete=models.CASCADE, related_name='detalles')
-    estado_tomo_prestamo = models.CharField(max_length=10, choices=ESTADO_TOMO, default='pendiente')
-    fecha_prestamo = models.DateField(blank=True, null=True)
-    fecha_devolucion = models.DateField(blank=True, null=True)
-    observacion = models.TextField(blank=True, null=True)
+    estado_detalle_tomo = models.CharField(
+        max_length=9, blank=False,
+        null=False, default='pendiente',
+        choices=ESTADO_DETALLE_TOMO_PRESTAMO
+    )
+    tomo_solicitado = models.ForeignKey(AsignacionTomo, on_delete=models.CASCADE)
+    codigo_prestamo = models.ForeignKey(PrestamoTomo, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Detalle de Préstamo'
         verbose_name_plural = 'Detalles de Préstamo'
         constraints = [
             models.UniqueConstraint(
-                fields=['tomo', 'prestamo'],
-                name='unique_tomo_prestamo'
+                fields=['tomo_solicitado', 'codigo_prestamo'],
+                name='unique_tomo_solicitado_codigo_prestamo'
             )
         ]
-
+    
     def __str__(self):
-        return f"Tomo {self.tomo.tomo.nro_tomo} - {self.get_estado_tomo_prestamo_display()}"
-
-    def marcar_como_devuelto(self):
-        """Marca este tomo como devuelto y actualiza su estado en AsignacionTomo."""
-        from datetime import date
-        self.estado_tomo_prestamo = 'devuelto'
-        self.fecha_devolucion = date.today()
-        self.save()
-
-        asignacion = self.tomo
-        asignacion.estado_tomo = 'disponible'
-        asignacion.save()
+        return f"Solicitud {self.codigo_prestamo.codigo_prestamo}, Tomo Solicitado {self.tomo_solicitado.tomo.titulo}. Estado de la Solicitud {self.estado_detalle_tomo}"

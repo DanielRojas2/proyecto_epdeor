@@ -47,6 +47,7 @@ LOCAL_APPS = [
     'apps.archivos',
     'apps.materiales',
     'apps.inventarios',
+    'apps.solicitudes',
 ]
 
 THIRD_APPS = []
