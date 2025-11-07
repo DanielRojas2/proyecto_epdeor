@@ -43,6 +43,7 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     'apps.usuarios',
+    'apps.inicio',
     'apps.almacenes',
     'apps.archivos',
     'apps.materiales',

@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Empresa Pública Departamental de Oruro</title>
+    <link rel="shortcut icon" href="{% static 'assets/epdeor.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
+</head>
+<body>
+    <div class="nav">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-4">
+                    <img src="{% static 'assets/epdeor_nobg.png' %}" alt="Empresa Pública Departamental de Oruro">
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-12">
+                            Opciones de inicio
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <nav class="nav">
+                                <ul>
+                                    <li><a href="#" class="nav-item">Inicio</a></li>
+                                    <li><a href="#" class="nav-item">Menú</a></li>
+                                    <li><a href="#" class="nav-item">Algo</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script>
+</body>
+</html>
