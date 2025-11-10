@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<div class="table-container mb-5">
+    <h3 class="mb-4 text-center">PERSONAL DE LA EMPRESA</h3>
+    <div class="row align-items-center mb-3">
+        <div class="col-lg-4 col-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar..." />
+        </div>
+        <div class="col-lg-4 col-6">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#empleadoModal">
+                + Agregar Personal
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th data-col="nombre">Nombre</th>
+                    <th data-col="cargo">Cargo</th>
+                    <th data-col="edad">Edad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for us in usuario %}
+                    <tr>
+                        <td>{{ us.nombre }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

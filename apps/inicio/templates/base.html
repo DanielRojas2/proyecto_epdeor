@@ -1,7 +1,6 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,35 +9,81 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
 </head>
-<body>
-    <div class="nav">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-4">
-                    <img src="{% static 'assets/epdeor_nobg.png' %}" alt="Empresa Pública Departamental de Oruro">
-                </div>
-                <div class="col-8">
-                    <div class="row">
-                        <div class="col-12">
-                            Opciones de inicio
+
+<body style="background-color: #ebebea;">
+    <div class="container-fluid px-0">
+        <div class="row g-0">
+            <div class="col-lg-3 d-none d-lg-flex align-items-center justify-content-center bg-dark"
+                style="background:#680202 !important;">
+                <a href="{% url 'inicio' %}" class="text-decoration-none text-center">
+                    <h1 class="m-0 fw-bold" style="font-size:48px; color:#cccccc; letter-spacing:1px;">
+                        EPDEOR
+                    </h1>
+                </a>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="row bg-white border-bottom d-none d-lg-flex align-items-center" style="--bs-gutter-x:none;">
+                    <div class="col-lg-7 d-flex align-items-center ps-4">
+                        <div class="d-flex align-items-center me-4 gap-1">
+                            <img src="{% static 'assets/icons/mail.png' %}" alt="" style="max-width: 1rem;">
+                            <small>epdeor@gmail.com</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <img src="{% static 'assets/icons/phone.png' %}" alt="" style="max-width: 1rem;">
+                            <small>+12345678</small>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <nav class="nav">
-                                <ul>
-                                    <li><a href="#" class="nav-item">Inicio</a></li>
-                                    <li><a href="#" class="nav-item">Menú</a></li>
-                                    <li><a href="#" class="nav-item">Algo</a></li>
-                                </ul>
-                            </nav>
+
+                    <div class="col-lg-5 d-flex justify-content-end pe-4">
+                        <div class="d-flex gap-2">
+                            <div class="d-flex align-items-center m-2">
+                                <a href="#" class="btn btn-quote">
+                                    <img src="{% static 'assets/icons/sesion.png' %}" alt="" style="max-width: 0.7rem;">
+                                    Cerrar Sesión
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <nav class="navbar navbar-expand-lg bg-white navbar-light py-0">
+                    <div class="container-fluid px-4">
+                        <a href="/" class="navbar-brand d-lg-none fw-bold" style="color:#680202;">
+                            EPDEOR
+                        </a>
+                        <button class="navbar-toggler m-2" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarCollapse">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                            <div class="navbar-nav mx-auto">
+                                <a href="#" class="nav-link active">Inicio</a>
+                                <a href="#" class="nav-link">Solicitudes</a>
+                                <a href="#" class="nav-link">Almacenes</a>
+                                <a href="#" class="nav-link">Materiales</a>
+                                <a href="#" class="nav-link">Archivos</a>
+                                <a href="{% url 'usuarios' %}" class="nav-link">Usuarios</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
             </div>
         </div>
     </div>
 
-    <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script>
+    <div class="container-fluid mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block footer %}
+    {% endblock %}
+
+    <script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
 </body>
+
 </html>

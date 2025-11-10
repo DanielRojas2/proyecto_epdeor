@@ -1,3 +1,212 @@
 {% extends 'base.html' %}
 
-<h1>Inicio</h1>
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Cards -->
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-geo-alt-fill icon"></i>
+            <div>
+                <h5 class="mb-1">Solicitudes pendientes</h5>
+                <p class="mb-0">
+                    No hay nada que mostrar
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-envelope-fill icon"></i>
+            <div>
+                <h5 class="mb-1">Solicitar Material</h5>
+                <p class="mb-0">info@example.com</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-telephone-fill icon"></i>
+            <div>
+                <h5 class="mb-1">Solicitar Archivos</h5>
+                <p class="mb-0">+012 345 6789</p>
+            </div>
+        </div>
+    </div>
+    <!-- end cards -->
+</div>
+
+<div class="table-container mt-3 mb-5">
+    <h3 class="mb-4 text-center">Historial de Solicitudes Realizadas</h3>
+    <div class="row align-items-center mb-3">
+        <div class="col-lg-4 col-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar..." />
+        </div>
+        <div class="col-lg-4 col-6">
+            <select id="filterSelect" class="form-select">
+                <option value="">Filtrar por cargo</option>
+                <option value="Desarrollador">Desarrollador</option>
+                <option value="Diseñador">Diseñador</option>
+                <option value="Administrador">Administrador</option>
+            </select>
+        </div>
+        <div class="col-lg-4 col-6">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#empleadoModal">
+                + Agregar Empleado
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th data-col="id">#</th>
+                    <th data-col="nombre">Nombre</th>
+                    <th data-col="cargo">Cargo</th>
+                    <th data-col="edad">Edad</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="modal fade" id="empleadoModal" tabindex="-1" aria-labelledby="empleadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg border-0 rounded-3">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-semibold" id="empleadoModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>Agregar Nuevo Empleado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <form id="formEmpleado">
+                    <div class="row g-3">
+                        <!-- Nombre -->
+                        <div class="col-12 col-md-6">
+                            <label for="nombre" class="form-label fw-semibold">Nombre Completo</label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ej: Juan Pérez" required>
+                        </div>
+
+                        <!-- Cargo -->
+                        <div class="col-12 col-md-6">
+                            <label for="cargo" class="form-label fw-semibold">Cargo</label>
+                            <select id="cargo" class="form-select" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Desarrollador">Desarrollador</option>
+                                <option value="Diseñador">Diseñador</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+
+                        <!-- Edad -->
+                        <div class="col-12 col-md-6">
+                            <label for="edad" class="form-label fw-semibold">Edad</label>
+                            <input type="number" id="edad" class="form-control" min="18" max="70" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-12 col-md-6">
+                            <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+                            <input type="email" id="email" class="form-control" placeholder="ejemplo@correo.com">
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="col-12">
+                            <label for="observaciones" class="form-label fw-semibold">Observaciones</label>
+                            <textarea id="observaciones" class="form-control" rows="2"
+                                placeholder="Comentarios adicionales..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success px-4">
+                            Guardar <i class="bi bi-check-circle ms-1"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const empleados = [
+        { id: 1, nombre: "Juan Pérez", cargo: "Desarrollador", edad: 27 },
+        { id: 2, nombre: "Ana Gómez", cargo: "Diseñador", edad: 25 },
+        { id: 3, nombre: "Carlos Rojas", cargo: "Administrador", edad: 31 },
+        { id: 4, nombre: "Marta Díaz", cargo: "Desarrollador", edad: 29 },
+        { id: 5, nombre: "José Castillo", cargo: "Diseñador", edad: 34 },
+        { id: 6, nombre: "Elena Vargas", cargo: "Administrador", edad: 40 }
+    ];
+
+    let dataFiltrada = [...empleados];
+    let sortDirection = true;
+
+    const tableBody = document.getElementById("tableBody");
+    const searchInput = document.getElementById("searchInput");
+    const filterSelect = document.getElementById("filterSelect");
+
+    function renderTable(data) {
+        tableBody.innerHTML = "";
+        data.forEach(emp => {
+            const row = `<tr>
+        <td>${emp.id}</td>
+        <td>${emp.nombre}</td>
+        <td>${emp.cargo}</td>
+        <td>${emp.edad}</td>
+    </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    searchInput.addEventListener("input", () => {
+        filtrarDatos();
+    });
+
+    filterSelect.addEventListener("change", () => {
+        filtrarDatos();
+    });
+
+    function filtrarDatos() {
+        const texto = searchInput.value.toLowerCase();
+        const filtroCargo = filterSelect.value;
+
+        dataFiltrada = empleados.filter(emp => {
+            const coincideTexto =
+                emp.nombre.toLowerCase().includes(texto) ||
+                emp.cargo.toLowerCase().includes(texto);
+            const coincideCargo = filtroCargo ? emp.cargo === filtroCargo : true;
+            return coincideTexto && coincideCargo;
+        });
+
+        renderTable(dataFiltrada);
+    }
+
+    document.querySelectorAll("th").forEach(th => {
+        th.addEventListener("click", () => {
+            const col = th.dataset.col;
+            dataFiltrada.sort((a, b) => {
+                if (a[col] < b[col]) return sortDirection ? -1 : 1;
+                if (a[col] > b[col]) return sortDirection ? 1 : -1;
+                return 0;
+            });
+            sortDirection = !sortDirection;
+            renderTable(dataFiltrada);
+        });
+    });
+
+    renderTable(dataFiltrada);
+</script>
+{% endblock %}
