@@ -1,0 +1,30 @@
+.service-card {
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    border: 1px solid #680202;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.2);
+    transform: translateY(-5px);
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+}
+
+.badge-num {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+}
+
+li a {
+    text-decoration: none;
+}

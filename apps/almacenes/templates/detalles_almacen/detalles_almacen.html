@@ -8,14 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/custom/card-custom.css' %}">
 {% endblock %}
 
-{% block header %}
-    {% include 'navbar/navbar.html' %}
-{% endblock %}
-
-{% block body %}
-<section class="container mt-5 mb-5">
+{% block content %}
+<section class="container mt-5 mb-5 p-3" style="background-color: #e1dbdb; border-radius: 10px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0 text-danger">
+        <h4 class="fw-bold mb-0">
             <i class="fa-solid fa-warehouse me-2"></i> {{ almacen }}
         </h4>
         <a href="{% url 'almacenes' %}" class="btn btn-outline-secondary rounded-pill">
@@ -35,7 +31,7 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold text-danger mb-0">Estantes del almacén</h5>
+        <h5 class="fw-bold mb-0">Estantes del almacén</h5>
         <button class="btn btn-danger rounded-pill" id="btn-nuevo-estante">
             <i class="fa-solid fa-plus"></i> Nuevo estante
         </button>

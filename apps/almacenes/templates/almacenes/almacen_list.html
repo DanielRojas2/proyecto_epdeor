@@ -6,14 +6,10 @@
 <link rel="stylesheet" href="{% static 'css/custom/card-almacen.css' %}">
 {% endblock %}
 
-{% block header %}
-{% include 'navbar/navbar.html' %}
-{% endblock %}
-
-{% block body %}
-<section class="container-fluid mt-5 mb-5">
-    <div class="d-flex justify-content-between mb-3">
-        <h4 class="fw-bold">Gestión de Almacenes</h4>
+{% block content %}
+<section class="container-fluid mb-5" style="background-color: #e1dbdb; border-radius: 10px;">
+    <div class="d-flex justify-content-between mb-3 p-3">
+        <h1 class="fw-bold" style="color: #250c0c;">Gestión de Almacenes</h1>
         <button id="btn-nuevo" class="btn btn-danger rounded-pill">
             <i class="fa-solid fa-plus"></i> Nuevo Almacén
         </button>

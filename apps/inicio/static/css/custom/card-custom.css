@@ -1,0 +1,50 @@
+.custom-card {
+    border-left: 3px solid transparent;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.custom-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-left: 3px solid #680202;
+}
+
+.custom-icon {
+    color: #680202;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.custom-link {
+    color: #680202;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.custom-link::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    width: 0;
+    height: 2px;
+    background: #e63900;
+    transition: width 0.3s ease;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 2px;
+}
+
+.custom-card:hover .custom-link::before {
+    width: 10px;
+}
+
+.custom-link:hover {
+    gap: 10px;
+}

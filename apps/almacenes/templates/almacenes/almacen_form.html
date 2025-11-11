@@ -1,9 +1,8 @@
-<div class="modal-header bg-danger text-white">
+<div class="modal-header text-white" style="background-color: #680202;">
     <h5 class="modal-title">{{ title }}</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
 
-{# action_url debe llegar desde la vista; si no existe, como fallback usamos request.path #}
 <form method="post" action="{{ action_url|default:request.path }}" class="p-3" id="almacen-form">
     {% csrf_token %}
     <div class="modal-body">
