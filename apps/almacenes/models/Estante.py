@@ -3,7 +3,6 @@ from .Almacen import Almacen
 
 class Estante(models.Model):
     nro_estante = models.SmallIntegerField(default=1, blank=False, null=False)
-    descripcion_estante = models.TextField()
     almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE)
 
     creado = models.DateTimeField(auto_now_add=True)
@@ -14,7 +13,7 @@ class Estante(models.Model):
         verbose_name_plural = 'Estantes'
         constraints = [
             models.UniqueConstraint(
-                fields=['nro_estante', 'descripcion_estante', 'almacen'],
+                fields=['nro_estante', 'almacen'],
                 name='unique_almacen_estante_descripcion_estante'
             )
         ]

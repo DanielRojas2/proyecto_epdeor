@@ -1,0 +1,38 @@
+<div class="modal-header bg-danger text-white">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form method="post" action="{% url 'nivel_estante_create' estante.id %}" class="p-3">
+    {% csrf_token %}
+    <div class="modal-body">
+        {{ form.as_p }}
+        <button type="button" id="btn-agregar-nivel" class="btn btn-outline-danger mt-2">
+            <i class="fa-solid fa-plus"></i> Crear nuevo nivel
+        </button>
+        <div id="nivel-status" class="small mt-2 text-success d-none"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Asignar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    </div>
+</form>
+
+<script>
+$(function(){
+    $('#btn-agregar-nivel').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "{% url 'nivel_create' %}",
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success: function(response){
+                if(response.success){
+                    $('#nivel-status').text('Nivel creado: #' + response.nivel).removeClass('d-none');
+                    location.reload();
+                }
+            }
+        });
+    });
+});
+</script>

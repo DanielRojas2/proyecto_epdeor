@@ -1,0 +1,21 @@
+<div class="modal-header {% if almacen.estado_almacen == 'activo' %}bg-danger{% else %}bg-success{% endif %} text-white">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form method="post" action="{{ action_url }}" class="p-3">
+    {% csrf_token %}
+    <div class="modal-body">
+        <p>
+            ¿Seguro que deseas
+            <strong>{{ accion }}</strong>
+            el almacén <b>{{ almacen }}</b>?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn {% if almacen.estado_almacen == 'activo' %}btn-danger{% else %}btn-success{% endif %}">
+            {{ accion|capfirst }}
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    </div>
+</form>

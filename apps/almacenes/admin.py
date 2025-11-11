@@ -13,9 +13,9 @@ class AlmacenAdmin(admin.ModelAdmin):
 
 @admin.register(Estante)
 class EstanteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nro_estante', 'descripcion_estante', 'almacen', 'creado', 'actualizado')
+    list_display = ('id', 'nro_estante', 'almacen', 'creado', 'actualizado')
     list_filter = ('almacen__tipo_almacen',)
-    search_fields = ('nro_estante', 'descripcion_estante', 'almacen__nro_almacen')
+    search_fields = ('nro_estante', 'almacen__nro_almacen')
     ordering = ('almacen', 'nro_estante')
 
 @admin.register(Nivel)

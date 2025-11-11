@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Almacenes{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/custom/card-almacen.css' %}">
+{% endblock %}
+
+{% block header %}
+{% include 'navbar/navbar.html' %}
+{% endblock %}
+
+{% block body %}
+<section class="container-fluid mt-5 mb-5">
+    <div class="d-flex justify-content-between mb-3">
+        <h4 class="fw-bold">Gestión de Almacenes</h4>
+        <button id="btn-nuevo" class="btn btn-danger rounded-pill">
+            <i class="fa-solid fa-plus"></i> Nuevo Almacén
+        </button>
+    </div>
+    <div id="almacenes-container">
+        {% include 'almacenes/partials/almacen_cards.html' %}
+    </div>
+</section>
+
+<!-- Modal dinámico -->
+<div class="modal fade" id="modal-almacen" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+$(function(){
+    $('#btn-nuevo').click(function(e){
+        e.preventDefault();
+        $('#modal-content').load("{% url 'almacen_create' %}", function(){
+            $('#modal-almacen').modal('show');
+        });
+    });
+
+    $('#almacenes-container').on('click', '.btn-edit', function(e){
+        e.preventDefault();
+        $('#modal-content').load($(this).attr('href'), function(){
+            $('#modal-almacen').modal('show');
+        });
+    });
+
+    $('#almacenes-container').on('click', '.btn-delete', function(e){
+        e.preventDefault();
+        $('#modal-content').load($(this).attr('href'), function(){
+            $('#modal-almacen').modal('show');
+        });
+    });
+});
+</script>
+{% endblock %}

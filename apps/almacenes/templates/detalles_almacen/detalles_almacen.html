@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load dict_filters %}
+
+{% block title %}Detalles de {{ almacen }}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/custom/card-custom.css' %}">
+{% endblock %}
+
+{% block header %}
+    {% include 'navbar/navbar.html' %}
+{% endblock %}
+
+{% block body %}
+<section class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0 text-danger">
+            <i class="fa-solid fa-warehouse me-2"></i> {{ almacen }}
+        </h4>
+        <a href="{% url 'almacenes' %}" class="btn btn-outline-secondary rounded-pill">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+        <h5 class="fw-bold text-danger mb-3">Información general</h5>
+        <p><strong>Ubicación:</strong> {{ almacen.ubicacion }}</p>
+        <p><strong>Tipo:</strong> {{ almacen.get_tipo_almacen_display }}</p>
+        <p><strong>Estado:</strong>
+            <span class="badge {% if almacen.estado_almacen == 'activo' %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ almacen.estado_almacen|capfirst }}
+            </span>
+        </p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-danger mb-0">Estantes del almacén</h5>
+        <button class="btn btn-danger rounded-pill" id="btn-nuevo-estante">
+            <i class="fa-solid fa-plus"></i> Nuevo estante
+        </button>
+    </div>
+
+    <div class="row">
+        {% for estante in estantes %}
+            <div class="col-md-4 mb-4">
+                <div class="custom-card bg-white p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-danger mb-0">
+                            <i class="fa-solid fa-layer-group me-2"></i> Estante {{ estante.nro_estante }}
+                        </h6>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill btn-nuevo-nivel"
+                                data-estante-id="{{ estante.id }}">
+                            <i class="fa-solid fa-plus"></i> Nivel
+                        </button>
+                    </div>
+                    <p class="text-muted small mb-3">{{ estante.descripcion_estante }}</p>
+
+                    {% with niveles=niveles_por_estante|get_item:estante.id %}
+                        {% if niveles %}
+                            <ul class="list-group small">
+                                {% for ne in niveles %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Nivel {{ ne.nivel.nro_nivel }}
+                                        <span class="badge bg-danger rounded-pill">
+                                            {{ ne.espacio_disponible }} %
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted text-center mb-0 small">Sin niveles asignados</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted text-center">No hay estantes registrados en este almacén.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="modal fade" id="modal-detalle" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+$(function(){
+    $('#btn-nuevo-estante').click(function(e){
+        e.preventDefault();
+        $('#modal-content').load("{% url 'estante_create' almacen.id %}", function(){
+            $('#modal-detalle').modal('show');
+        });
+    });
+
+    $('.btn-nuevo-nivel').click(function(e){
+        e.preventDefault();
+        const estanteId = $(this).data('estante-id');
+        $('#modal-content').load(`/nivel_estante/create/${estanteId}/`, function(){
+            $('#modal-detalle').modal('show');
+        });
+    });
+});
+</script>
+{% endblock %}
