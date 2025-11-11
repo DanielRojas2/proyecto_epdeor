@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Usuarios{% endblock %}
 
@@ -11,30 +12,86 @@
         </div>
         <div class="col-lg-4 col-6">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#empleadoModal">
-                + Agregar Personal
+                Agregar Personal
             </button>
         </div>
     </div>
     <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center">
+        <table class="table table-bordered align-middle text-center" id="tablaEmpleados">
             <thead class="table-dark">
                 <tr>
                     <th data-col="nombre">Nombre</th>
+                    <th data-col="ci">CI</th>
+                    <th data-col="alta">Alta</th>
+                    <th data-col="baja">Baja</th>
                     <th data-col="cargo">Cargo</th>
-                    <th data-col="edad">Edad</th>
+                    <th data-col="rol">Rol</th>
+                    <th data-col="estado">Estado</th>
+                    <th data-col="acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for us in usuario %}
-                    <tr>
-                        <td>{{ us.nombre }}</td>
-                    </tr>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nombre }} {{ usuario.apellido_paterno }} {{ usuario.apellido_materno }}</td>
+                    <td>{{ usuario.ci }}</td>
+                    <td>{{ usuario.alta|date:"Y-m-d" }}</td>
+                    <td>{{ usuario.baja|date:"Y-m-d" }}</td>
+                    <td>{{ usuario.cargo.cargo }}</td>
+                    <td>{{ usuario.cargo.rol.rol }}</td>
+                    <td>{{ usuario.estado }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+        <div class="mb-2">
+            <label for="rowsPerPage" class="form-label me-2 fw-semibold">Mostrar:</label>
+            <select id="rowsPerPage" class="form-select d-inline-block w-auto">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+            <span class="ms-2">registros por página</span>
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0" id="pagination"></ul>
+        </nav>
     </div>
 </div>
 {% endblock %}
 
 {% block footer %}
+<div class="modal fade" id="empleadoModal" tabindex="-1" aria-labelledby="empleadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg border-0 rounded-3">
+            <div class="modal-header text-white" style="background-color: #680202;">
+                <h5 class="modal-title" id="empleadoModalLabel">
+                    Registrar Personal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar">
+                </button>
+            </div>
+
+            <div class="modal-body p-4" id="modalFormContainer">
+                <!-- formulario dinámico para actualización, creación, etc. -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/usuarios/usuarios.js' %}"></script>
 {% endblock %}

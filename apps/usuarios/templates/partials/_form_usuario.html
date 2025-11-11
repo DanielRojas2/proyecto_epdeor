@@ -1,0 +1,50 @@
+<form id="formEmpleado">
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+            <input type="text" name="nombre" id="nombre" value="{{ usuario.nombre|default:'' }}" class="form-control" required>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="apellido_paterno" class="form-label fw-semibold">Apellido Paterno</label>
+            <input type="text" name="apellido_paterno" id="apellido_paterno" value="{{ usuario.apellido_paterno|default:'' }}" class="form-control" required>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="apellido_materno" class="form-label fw-semibold">Apellido Materno</label>
+            <input type="text" name="apellido_materno" id="apellido_materno" value="{{ usuario.apellido_materno|default:'' }}" class="form-control">
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="ci" class="form-label fw-semibold">C.I.</label>
+            <input type="text" name="ci" id="ci" value="{{ usuario.ci|default:'' }}" class="form-control" required>
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="baja" class="form-label fw-semibold">Baja (opcional)</label>
+            <input type="date" name="baja" id="baja" value="{{ usuario.baja|date:'Y-m-d' }}" class="form-control">
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="row g-1">
+                <div class="col-8 col-md-8">
+                    <label for="cargo" class="form-label fw-semibold">Cargo</label>
+                    <select name="cargo" id="cargo" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        {% for c in cargos %}
+                            <option value="{{ c.id }}" {% if usuario.cargo.id == c.id %}selected{% endif %}>
+                                {{ c.cargo }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-4 col-md-4">
+                    <a href="#" class="btn btn-success w-100">Nuevo Cargo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success px-4">
+            Guardar <i class="bi bi-check-circle ms-1"></i>
+        </button>
+    </div>
+</form>

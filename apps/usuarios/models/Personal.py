@@ -21,7 +21,11 @@ class Personal(models.Model):
         Cargo, on_delete=models.CASCADE, related_name='personal',
     )
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    estado = models.CharField(max_length=8, blank=False, null=False, choices=ESTADO_PERSONAL)
+    estado = models.CharField(
+        max_length=8, blank=False,
+        null=False, choices=ESTADO_PERSONAL,
+        default='activo'
+    )
     
     class Meta:
         verbose_name = "Personal"

@@ -59,12 +59,16 @@
 
                         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                             <div class="navbar-nav mx-auto">
-                                <a href="#" class="nav-link active">Inicio</a>
+                                <a href="{% url 'inicio' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                                    Inicio
+                                </a>
                                 <a href="#" class="nav-link">Solicitudes</a>
                                 <a href="#" class="nav-link">Almacenes</a>
                                 <a href="#" class="nav-link">Materiales</a>
                                 <a href="#" class="nav-link">Archivos</a>
-                                <a href="{% url 'usuarios' %}" class="nav-link">Usuarios</a>
+                                <a href="{% url 'usuarios' %}" class="nav-link {% if request.path == '/usuarios/' %}active{% endif %}">
+                                    Usuarios
+                                </a>
                             </div>
                         </div>
                     </div>
