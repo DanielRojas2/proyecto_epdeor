@@ -1,0 +1,4 @@
+filtrar los estantes disponibles que tengan espacio
+mensajes de alerta para el manejo de estantes según espacio 
+los que tienen 0 no aparecen, los que tienen según espacio
+Mostrar niveles de estante según el espacio que tenga en la parte de asignación.
