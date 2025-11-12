@@ -68,7 +68,9 @@
                                     Almacenes
                                 </a>
                                 <a href="#" class="nav-link">Materiales</a>
-                                <a href="#" class="nav-link">Archivos</a>
+                                <a href="{% url 'tomos' %}" class="nav-link {% if request.path == '/tomos/' %}active{% endif %}">
+                                    Tomos
+                                </a>
                                 <a href="{% url 'usuarios' %}" class="nav-link {% if request.path == '/usuarios/' %}active{% endif %}">
                                     Usuarios
                                 </a>

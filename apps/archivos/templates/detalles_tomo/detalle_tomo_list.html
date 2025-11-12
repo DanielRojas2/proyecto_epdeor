@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Archivos del Tomo {{ tomo.nro_tomo }}{% endblock %}
+
+{% block content %}
+<div class="table-container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-center">ARCHIVOS DEL TOMO {{ tomo.nro_tomo }} - {{ tomo.titulo }}</h3>
+        <a href="{% url 'tomos' %}" class="btn btn-outline-secondary rounded-pill">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="row g-2 mb-3 align-items-center">
+        <div class="col-md-4">
+            <input id="searchFile" class="form-control" placeholder="Buscar por nombre..." />
+        </div>
+
+        <div class="col-md-3">
+            <select id="filterEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                {% for e in estados %}
+                    {% if e %}<option value="{{ e }}">{{ e|title }}</option>{% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2 text-end">
+            <button class="btn btn-primary" id="btn-nuevo">Adjuntar Archivo</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center" id="tabla-detalles">
+            <thead class="table-dark">
+                <tr>
+                    <th data-col="nro_doc" class="sortable">#</th>
+                    <th data-col="nombre_archivo" class="sortable">Nombre</th>
+                    <th data-col="nro_fojas" class="sortable">Fojas</th>
+                    <th data-col="estado_archivo" class="sortable">Estado</th>
+                    <th data-col="fecha_adjunto" class="sortable">Fecha</th>
+                    <th>Archivo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+        <div class="mb-2">
+            <label for="rowsPerPage" class="form-label me-2 fw-semibold">Mostrar:</label>
+            <select id="rowsPerPage" class="form-select d-inline-block w-auto">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+            </select>
+            <span class="ms-2">registros por página</span>
+        </div>
+        <nav><ul class="pagination mb-0" id="pagination"></ul></nav>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-detalle" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055;">
+    {% for message in messages %}
+    <div class="toast align-items-center show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Mensaje</strong>
+            <small>Ahora mismo</small>
+            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body text-center fw-semibold">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const DETALLES = {{ detalles_data|safe }};
+const TOMO_ID = {{ tomo.id }};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tableBody = document.getElementById('tableBody');
+    const searchFile = document.getElementById('searchFile');
+    const filterEstado = document.getElementById('filterEstado');
+    const rowsPerPageSelect = document.getElementById('rowsPerPage');
+    const pagination = document.getElementById('pagination');
+    const btnNuevo = document.getElementById('btn-nuevo');
+
+    let data = [...DETALLES];
+    let filtered = [...data];
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+    let sortCol = null;
+    let sortAsc = true;
+
+    const escapeHtml = str => str ? str.replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m])) : '';
+
+    function renderRow(d) {
+        const viewLink = d.url_archivo
+            ? `<a href="${d.url_archivo}" target="_blank" class="btn btn-sm btn-outline-success">Ver PDF</a>`
+            : `<span class="text-muted">Sin archivo</span>`;
+        return `
+        <tr>
+            <td>${d.nro_doc}</td>
+            <td class="text-start">${escapeHtml(d.nombre_archivo)}</td>
+            <td>${d.nro_fojas}</td>
+            <td>${escapeHtml(d.estado_archivo)}</td>
+            <td>${escapeHtml(d.fecha_adjunto)}</td>
+            <td>${viewLink}</td>
+            <td>
+                <a href="${d.url_edit}" class="btn btn-sm btn-outline-primary me-1 btn-edit"><i class="bi bi-pencil"></i></a>
+                <a href="${d.url_delete}" class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></a>
+            </td>
+        </tr>`;
+    }
+
+    function renderTable() {
+        tableBody.innerHTML = '';
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const items = filtered.slice(start, end);
+        tableBody.innerHTML = items.length ? items.map(renderRow).join('') :
+            `<tr><td colspan="7">No hay registros</td></tr>`;
+        renderPagination();
+    }
+
+    function renderPagination() {
+        pagination.innerHTML = '';
+        const pageCount = Math.ceil(filtered.length / rowsPerPage) || 1;
+        const createBtn = (label, disabled, handler) => {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (disabled ? ' disabled' : '');
+            const btn = document.createElement('button');
+            btn.className = 'page-link';
+            btn.textContent = label;
+            btn.addEventListener('click', handler);
+            li.appendChild(btn);
+            return li;
+        };
+        pagination.appendChild(createBtn('«', currentPage === 1, () => { currentPage--; renderTable(); }));
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (i === currentPage ? ' active' : '');
+            const btn = document.createElement('button');
+            btn.className = 'page-link';
+            btn.textContent = i;
+            btn.addEventListener('click', () => { currentPage = i; renderTable(); });
+            li.appendChild(btn);
+            pagination.appendChild(li);
+        }
+        pagination.appendChild(createBtn('»', currentPage === pageCount, () => { currentPage++; renderTable(); }));
+    }
+
+    function applyFilters() {
+        const q = (searchFile.value || '').toLowerCase();
+        const e = (filterEstado.value || '').trim();
+        filtered = data.filter(d =>
+            (!q || d.nombre_archivo.toLowerCase().includes(q)) &&
+            (!e || d.estado_archivo === e)
+        );
+        if (sortCol) sortData(sortCol, sortAsc);
+        currentPage = 1;
+        renderTable();
+    }
+
+    function sortData(col, asc) {
+        filtered.sort((a, b) => {
+            let va = a[col] || '', vb = b[col] || '';
+            if (!isNaN(va) && !isNaN(vb)) return asc ? va - vb : vb - va;
+            return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+        });
+    }
+
+    [searchFile, filterEstado].forEach(el => {
+        el.addEventListener('input', applyFilters);
+        el.addEventListener('change', applyFilters);
+    });
+
+    rowsPerPageSelect.addEventListener('change', () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value);
+        currentPage = 1;
+        renderTable();
+    });
+
+    document.querySelectorAll('#tabla-detalles th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = th.dataset.col;
+            if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+            sortData(sortCol, sortAsc);
+            renderTable();
+        });
+    });
+
+    document.body.addEventListener('click', ev => {
+        const editBtn = ev.target.closest('.btn-edit');
+        const delBtn = ev.target.closest('.btn-delete');
+        if (editBtn) {
+            ev.preventDefault();
+            fetch(editBtn.href).then(r => r.text()).then(html => {
+                document.getElementById('modal-content').innerHTML = html;
+                new bootstrap.Modal(document.getElementById('modal-detalle')).show();
+            });
+        }
+        if (delBtn) {
+            ev.preventDefault();
+            if (confirm('¿Eliminar este archivo?')) window.location.href = delBtn.href;
+        }
+    });
+
+    btnNuevo.addEventListener('click', e => {
+        e.preventDefault();
+        fetch(`/detalle_tomo/create/${TOMO_ID}/`).then(r => r.text()).then(html => {
+            document.getElementById('modal-content').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('modal-detalle')).show();
+        });
+    });
+
+    renderTable();
+    document.querySelectorAll('.toast').forEach(t => new bootstrap.Toast(t).show());
+});
+</script>
+{% endblock %}

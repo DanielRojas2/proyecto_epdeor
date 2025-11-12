@@ -1,0 +1,15 @@
+<div class="modal-header text-white" style="background-color: #680202;">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form method="post" action="{{ action_url|default:request.path }}" class="p-3" id="tomo-form">
+    {% csrf_token %}
+    <div class="modal-body">
+        {{ form.as_p }}
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    </div>
+</form>

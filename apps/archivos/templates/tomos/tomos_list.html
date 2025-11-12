@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tomos{% endblock %}
+
+{% block content %}
+<div class="table-container mb-5">
+    <h3 class="mb-4 text-center">LISTADO DE TOMOS</h3>
+
+    <div class="row g-2 mb-3 align-items-center">
+        <div class="col-md-4">
+            <input id="searchTitle" class="form-control" placeholder="Buscar por título..." />
+        </div>
+
+        <div class="col-md-2">
+            <select id="filterGestion" class="form-select">
+                <option value="">Todas las gestiones</option>
+                {% for g in gestiones %}
+                    {% if g %}<option value="{{ g }}">{{ g }}</option>{% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="filterMes" class="form-select">
+                <option value="">Todos los meses</option>
+                {% for m in meses %}
+                    {% if m %}<option value="{{ m }}">{{ m }}</option>{% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="filterEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                {% for e in estados %}
+                    {% if e %}<option value="{{ e }}">{{ e }}</option>{% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2 text-end">
+            <button class="btn btn-primary" id="btn-nuevo">Agregar Tomo</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center" id="tabla-tomos">
+            <thead class="table-dark">
+                <tr>
+                    <th data-col="nro_tomo" class="sortable">Nro. Tomo</th>
+                    <th data-col="titulo" class="sortable">Título</th>
+                    <th data-col="gestion" class="sortable">Gestión</th>
+                    <th data-col="mes" class="sortable">Mes</th>
+                    <th data-col="fecha_apertura" class="sortable">Fecha Apertura</th>
+                    <th data-col="nro_fojas_total" class="sortable">Fojas Total</th>
+                    <th data-col="estado" class="sortable">Estado</th>
+                    <th>Detalles</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Contenido dinámico de la tabla -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+        <div class="mb-2">
+            <label for="rowsPerPage" class="form-label me-2 fw-semibold">Mostrar:</label>
+            <select id="rowsPerPage" class="form-select d-inline-block w-auto">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+            <span class="ms-2">registros por página</span>
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0" id="pagination"></ul>
+        </nav>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-tomo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055;">
+    {% for message in messages %}
+    <div class="toast align-items-center show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+        <div class="toast-header {% if message.tags == 'success' %}bg-success text-white{% elif message.tags == 'error' or message.tags == 'danger' %}bg-danger text-white{% elif message.tags == 'warning' %}bg-warning{% else %}bg-secondary text-white{% endif %}">
+            <strong class="me-auto">
+                {% if message.tags == 'success' %}Éxito{% elif message.tags == 'error' or message.tags == 'danger' %}Error{% elif message.tags == 'warning' %}Aviso{% else %}Información{% endif %}
+            </strong>
+            <small>Ahora mismo</small>
+            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body text-center fw-semibold">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const TOMOS = {{ tomos_data|safe }};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tableBody = document.getElementById('tableBody');
+    const searchTitle = document.getElementById('searchTitle');
+    const filterGestion = document.getElementById('filterGestion');
+    const filterMes = document.getElementById('filterMes');
+    const filterEstado = document.getElementById('filterEstado');
+    const rowsPerPageSelect = document.getElementById('rowsPerPage');
+    const pagination = document.getElementById('pagination');
+    const btnNuevo = document.getElementById('btn-nuevo');
+
+    let data = [...TOMOS];
+    let filtered = [...data];
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+    let sortCol = null;
+    let sortAsc = true;
+
+    function renderRow(t) {
+        return `
+        <tr>
+            <td>${t.nro_tomo}</td>
+            <td class="titulo text-start">${escapeHtml(t.titulo)}</td>
+            <td class="gestion">${escapeHtml(t.gestion)}</td>
+            <td class="mes">${escapeHtml(t.mes)}</td>
+            <td>${escapeHtml(t.fecha_apertura)}</td>
+            <td>${t.nro_fojas_total}</td>
+            <td class="estado">${escapeHtml(t.estado)}</td>
+            <td><a href="${t.url_detalle}" class="text-decoration-none">Ver Detalles</a></td>
+            <td>
+                <a href="${t.url_edit}" class="btn btn-sm btn-outline-primary btn-edit me-1"><i class="bi bi-pencil"></i></a>
+                <a href="${t.url_delete}" class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></a>
+            </td>
+        </tr>`;
+    }
+
+    function escapeHtml(str) {
+        if (!str && str !== 0) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function renderTable() {
+        tableBody.innerHTML = '';
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageItems = filtered.slice(start, end);
+        if (pageItems.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="9">No hay registros</td></tr>`;
+        } else {
+            tableBody.innerHTML = pageItems.map(renderRow).join('');
+        }
+        renderPagination();
+    }
+
+    function renderPagination() {
+        pagination.innerHTML = '';
+        const pageCount = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+        const prevLi = document.createElement('li');
+        prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-link';
+        prevBtn.textContent = '«';
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; renderTable(); }
+        });
+        prevLi.appendChild(prevBtn);
+        pagination.appendChild(prevLi);
+
+        const maxButtons = 7;
+        let startPage = 1;
+        let endPage = pageCount;
+        if (pageCount > maxButtons) {
+            const half = Math.floor(maxButtons / 2);
+            startPage = Math.max(1, currentPage - half);
+            endPage = startPage + maxButtons - 1;
+            if (endPage > pageCount) { endPage = pageCount; startPage = endPage - maxButtons + 1; }
+        }
+        for (let i = startPage; i <= endPage; i++) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (i === currentPage ? ' active' : '');
+            const btn = document.createElement('button');
+            btn.className = 'page-link';
+            btn.textContent = i;
+            btn.addEventListener('click', () => {
+                currentPage = i;
+                renderTable();
+            });
+            li.appendChild(btn);
+            pagination.appendChild(li);
+        }
+
+        const nextLi = document.createElement('li');
+        nextLi.className = 'page-item' + (currentPage === pageCount ? ' disabled' : '');
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-link';
+        nextBtn.textContent = '»';
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < pageCount) { currentPage++; renderTable(); }
+        });
+        nextLi.appendChild(nextBtn);
+        pagination.appendChild(nextLi);
+    }
+
+    function applyFiltersAndSearch() {
+        const q = (searchTitle.value || '').trim().toLowerCase();
+        const g = (filterGestion.value || '').trim();
+        const m = (filterMes.value || '').trim();
+        const e = (filterEstado.value || '').trim();
+
+        filtered = data.filter(t => {
+            const titleMatch = (t.titulo || '').toLowerCase().includes(q);
+            const gestionMatch = !g || (t.gestion || '') === g;
+            const mesMatch = !m || (t.mes || '') === m;
+            const estadoMatch = !e || (t.estado || '') === e;
+            return titleMatch && gestionMatch && mesMatch && estadoMatch;
+        });
+
+        if (sortCol) {
+            sortFiltered(sortCol, sortAsc);
+        }
+
+        currentPage = 1;
+        renderTable();
+    }
+
+    function sortFiltered(column, asc) {
+        filtered.sort((a, b) => {
+            let va = a[column] === null || a[column] === undefined ? '' : a[column];
+            let vb = b[column] === null || b[column] === undefined ? '' : b[column];
+
+            if (!isNaN(Number(va)) && !isNaN(Number(vb))) {
+                return asc ? (Number(va) - Number(vb)) : (Number(vb) - Number(va));
+            }
+            va = String(va).toLowerCase();
+            vb = String(vb).toLowerCase();
+            if (va < vb) return asc ? -1 : 1;
+            if (va > vb) return asc ? 1 : -1;
+            return 0;
+        });
+    }
+
+    [searchTitle, filterGestion, filterMes, filterEstado].forEach(el => {
+        el.addEventListener('input', () => applyFiltersAndSearch());
+        el.addEventListener('change', () => applyFiltersAndSearch());
+    });
+
+    rowsPerPageSelect.addEventListener('change', () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value) || 5;
+        currentPage = 1;
+        renderTable();
+    });
+
+    document.querySelectorAll('#tabla-tomos thead th.sortable').forEach(th => {
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', () => {
+            const col = th.dataset.col;
+            if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+            sortFiltered(sortCol, sortAsc);
+            currentPage = 1;
+            renderTable();
+            document.querySelectorAll('#tabla-tomos thead th').forEach(h => h.classList.remove('sorting-asc','sorting-desc'));
+            th.classList.add(sortAsc ? 'sorting-asc' : 'sorting-desc');
+        });
+    });
+
+    document.body.addEventListener('click', (ev) => {
+        const editBtn = ev.target.closest('.btn-edit');
+        const delBtn = ev.target.closest('.btn-delete');
+
+        if (editBtn) {
+            ev.preventDefault();
+            fetch(editBtn.getAttribute('href'))
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('modal-content').innerHTML = html;
+                    const modal = new bootstrap.Modal(document.getElementById('modal-tomo'));
+                    modal.show();
+                });
+            return;
+        }
+
+        if (delBtn) {
+            ev.preventDefault();
+            if (confirm('¿Seguro que deseas eliminar este tomo?')) {
+                window.location.href = delBtn.getAttribute('href');
+            }
+            return;
+        }
+    });
+
+    btnNuevo.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetch("{% url 'tomo_create' %}")
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById('modal-content').innerHTML = html;
+                const modal = new bootstrap.Modal(document.getElementById('modal-tomo'));
+                modal.show();
+            });
+    });
+
+    applyFiltersAndSearch();
+
+    document.querySelectorAll('.toast').forEach(t => new bootstrap.Toast(t).show());
+});
+</script>
+{% endblock %}
