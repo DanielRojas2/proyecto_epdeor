@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Personal{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/custom/tabla_custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4 border rounded" style="background-color: #112D4E;">
+    <div class="d-flex justify-content-between align-items-center m-2">
+        <h5 class="text-white mb-0">Gestión de Personal</h5>
+        <button id="btnRegistrarPersonal" class="btn btn-success btn-sm" data-bs-toggle="modal"
+            data-bs-target="#modalPersonal">
+            <i class="fa fa-plus"></i> Registrar Personal
+        </button>
+    </div>
+    <div class="row mt-3">
+        <div class="col-lg-4 col-12">
+            <div class="input-group mb-3">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" id="buscador" class="form-control" placeholder="Buscar...">
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-12">
+            <select id="filtroEstado" class="form-select">
+                <option value="">Estado (Todos)</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+            </select>
+        </div>
+
+        <div class="col-lg-2 col-12">
+            <select id="filtroCargo" class="form-select">
+                <option value="">Cargo (Todos)</option>
+                {% for c in cargos %}
+                    <option value="{{ c.cargo }}">{{ c.cargo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- CABECERA -->
+    <div class="tbl-header mt-2">
+        <table>
+            <thead>
+                <tr>
+                    <th data-col="0">Nombre Completo</th>
+                    <th data-col="1">Usuario</th>
+                    <th data-col="2">CI</th>
+                    <th data-col="3">Alta</th>
+                    <th data-col="4">Baja</th>
+                    <th data-col="5">Cargo</th>
+                    <th data-col="6">Unidad</th>
+                    <th data-col="7">Departamento</th>
+                    <th data-col="8">Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="tbl-content mb-4">
+        <table id="tablaPersonal">
+            <tbody style="background-color: #cecaca;">
+                {% for p in personal %}
+                <tr>
+                    <td>{{ p.nombre }} {{ p.apellido_paterno }} {{ p.apellido_materno }}</td>
+                    <td>{{ p.usuario.username }}</td>
+                    <td>{{ p.ci }}</td>
+                    <td>{{ p.alta|date:'d-m-Y' }}</td>
+                    <td>{{ p.baja|date:'d-m-Y' }}</td>
+                    <td>{{ p.cargo.cargo }}</td>
+                    <td>{{ p.cargo.unidad }}</td>
+                    <td>{{ p.cargo.departamento }}</td>
+                    <td>{{ p.estado }}</td>
+                    <td>
+                        <button class="btn btn-success btnEditar"
+                            data-id="{{ p.id }}"
+                            data-nombre="{{ p.nombre }}"
+                            data-apellido_p="{{ p.apellido_paterno }}"
+                            data-apellido_m="{{ p.apellido_materno }}"
+                            data-ci="{{ p.ci }}"
+                            data-baja="{{ p.baja|date:'Y-m-d' }}"
+                            data-cargo="{{ p.cargo.id }}"
+                        >
+                        <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="{% url 'toggle_estado_usuario' p.id %}" class="btn btnToggleEstado {% if p.estado == 'activo' %}btn-danger{% else %}btn-warning{% endif %}">
+                            {% if p.estado == 'activo' %}
+                                <i class="fas fa-user-lock"></i>
+                            {% else %}
+                                <i class="fas fa-user-check"></i>
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">No existe información</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPersonal" tabindex="-1" aria-labelledby="modalPersonalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #112D4E;">
+                <h3 class="modal-title fs-5" id="modalAlmacenLabel">Registrar Personal</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post" class="modal-body">
+                {% csrf_token %}
+                <input type="hidden" name="personal_id" id="personal_id">
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        {{ personal_form.nombre }}
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">Apellido Paterno</label>
+                        {{ personal_form.apellido_paterno }}
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">Apellido Materno</label>
+                        {{ personal_form.apellido_materno }}
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">C.I.</label>
+                        {{ personal_form.ci }}
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">Baja (opcional)</label>
+                        {{ personal_form.baja }}
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="form-label">Cargo</label>
+                        <div class="d-flex gap-2">
+                            {{ personal_form.cargo }}
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#modalCargo">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/usuarios/usuarios.js' %}"></script>
+{% endblock %}

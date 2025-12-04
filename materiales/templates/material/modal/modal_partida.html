@@ -1,0 +1,36 @@
+<div class="modal fade" id="modalPartida" tabindex="-1" aria-labelledby="modalPartidaLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #112D4E;">
+                <h3 class="modal-title fs-5" id="modalPartidaLabel">Agregar Partida Presupuestaria</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formPartida">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <label for="partida_numero" class="form-label">Partida</label>
+                            <input type="text" class="form-control" id="partida_numero" 
+                                   placeholder="Ej: 39500" maxlength="5" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese un número de partida válido (máx. 5 dígitos)
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <input type="text" class="form-control" id="categoria" 
+                                   placeholder="Ej: Útiles de Escritorio" maxlength="75" required>
+                            <div class="invalid-feedback">
+                                Por favor ingrese una categoría
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarPartida">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

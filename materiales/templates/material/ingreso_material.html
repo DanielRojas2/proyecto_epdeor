@@ -1,0 +1,239 @@
+<!-- materiales/templates/material/ingreso_material.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de Material{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/custom/select_custom.css' %}">
+<style>
+    .material-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .material-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .material-selected {
+        border: 2px solid #198754;
+        background-color: #f8fff9;
+    }
+    .tabla-materiales tbody tr {
+        cursor: pointer;
+    }
+    .tabla-materiales tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .cantidad-input {
+        width: 80px;
+        text-align: center;
+    }
+
+    .material-list {
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <h2>Registro de Ingreso de Material</h2>
+            <a href="{% url 'materiales:material' %}" class="btn btn-primary d-flex justify-content-center align-items-center">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Datos de Ingreso -->
+            <div class="row m-1">
+                <div class="col-lg-12 col-md-12 col-12">
+                    <h5>Datos de Ingreso</h5>
+                </div>
+                <hr>
+                <div class="col-lg-1 col-md-6 col-12 mb-3">
+                    <label for="nro_ingreso" class="form-label">Nro. Ingreso:</label>
+                    <input type="text" class="form-control" id="nro_ingreso" placeholder="XXX-XXXX" required>
+                </div>
+                <div class="col-lg-2 col-md-6 col-12 mb-3">
+                    <label for="h_ruta" class="form-label">H/Ruta:</label>
+                    <input type="text" class="form-control" id="h_ruta" placeholder="XXX-XXXX" required>
+                </div>
+                <div class="col-lg-2 col-md-6 col-12 mb-3">
+                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso:</label>
+                    <input type="date" class="form-control" id="fecha_ingreso" required>
+                </div>
+                <div class="col-lg-1 col-md-6 col-12 mb-3">
+                    <label for="factura" class="form-label">Factura:</label>
+                    <input type="text" class="form-control" id="factura" placeholder="0000000" required>
+                </div>
+                <div class="col-lg-2 col-md-6 col-12 mb-3">
+                    <label for="orden_compra" class="form-label">Orden de Compra:</label>
+                    <input type="text" class="form-control" id="orden_compra" placeholder="XX/XXXX" required>
+                </div>
+                <div class="col-lg-2 col-md-6 col-12 mb-3">
+                    <label for="selectProveedor" class="form-label">Proveedor:</label>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="selectProveedor" required>
+                            <option value="" selected disabled>Cargando proveedores...</option>
+                        </select>
+                        <button type="button" class="btn btn-outline-secondary" id="btnAbrirModalProveedor">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-12 mb-3">
+                    <label for="selectAlmacen" class="form-label">Almacén:</label>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="selectAlmacen" required>
+                            <option value="" selected disabled>Cargando almacenes...</option>
+                        </select>
+                        <button type="button" class="btn btn-outline-secondary" id="btnAbrirModalAlmacen">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materiales a Ingresar -->
+            <div class="row m-1">
+                <div class="col-lg-12 col-12">
+                    <h5>Materiales a Ingresar</h5>
+                </div>
+                <hr>
+                
+                <!-- Tabla de materiales seleccionados -->
+                <div class="col-lg-8 col-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped tabla-materiales">
+                            <thead>
+                                <tr>
+                                    <th width="15%">Cod. Material</th>
+                                    <th width="35%">Descripción</th>
+                                    <th width="15%">Unidad</th>
+                                    <th width="15%">Volumen</th>
+                                    <th width="15%">Cantidad</th>
+                                    <th width="5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaMaterialesBody">
+                                <!-- Los materiales seleccionados aparecerán aquí -->
+                                <tr id="sinMateriales">
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        No hay materiales seleccionados. Busque y seleccione materiales en el panel derecho.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <strong>Total de materiales: </strong>
+                            <span id="totalMateriales">0</span>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btnRegistrarIngreso">
+                            <i class="fas fa-save"></i> Registrar Ingreso Completo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel de búsqueda y selección -->
+                <div class="col-lg-4 col-12">
+                    <div class="row">
+                        <div class="col-12 mb-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="m-0">Seleccionar Item</h5>
+                                <div class="card-action">
+                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalIngresoMaterial">
+                                        <i class="fas fa-plus-circle"></i>
+                                        Registrar Nuevo Item
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="buscarMaterial" 
+                                       placeholder="Buscar material para ingresar"
+                                       aria-label="Buscar material">
+                                <button class="btn btn-outline-secondary" type="button" id="btnBuscarMaterial">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="material-list" id="listaMateriales">
+                                <!-- Los materiales se cargarán aquí dinámicamente -->
+                                <div class="text-center text-muted py-4">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    Cargando materiales...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+    {% include 'material/modal/modal_material.html' %}
+    {% include 'material/modal/modal_partida.html' %}
+    {% include 'material/modal/modal_proveedor.html' %}
+    {% include 'material/modal/modal_almacen.html' %}
+{% endblock %}
+
+{% block toast %}
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="toastPartida" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <strong class="me-auto">Éxito</strong>
+            <small>Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastPartidaMessage">
+            Partida presupuestaria agregada exitosamente.
+        </div>
+    </div>
+
+    <div id="toastProveedor" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <strong class="me-auto">Éxito</strong>
+            <small>Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastProveedorMessage">
+            Proveedor agregado exitosamente.
+        </div>
+    </div>
+
+    <div id="toastAlmacen" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <strong class="me-auto">Éxito</strong>
+            <small>Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastAlmacenMessage">
+            Almacén agregado exitosamente.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const MATERIAL_LIST_URL = "{% url 'materiales:material' %}";
+    </script>
+    <script src="{% static 'js/material/ingreso_material.js' %}"></script>
+{% endblock %}

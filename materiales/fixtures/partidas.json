@@ -1,0 +1,42 @@
+[
+    {
+        "partida": "32100",
+        "categoria": "Productos de Papel"
+    },
+    {
+        "partida": "34100",
+        "categoria": "Combustibles, Lubricantes, Derivados y otras Fuentes de Energía"
+    },
+    {
+        "partida": "34200",
+        "categoria": "Productos Químicos y Farmacéuticos "
+    },
+    {
+        "partida": "34500",
+        "categoria": "Productos de Minerales no Metálicos y Plásticos"
+    },
+    {
+        "partida": "34600",
+        "categoria": "Productos Metálicos"
+    },
+    {
+        "partida": "34800",
+        "categoria": "Herramientas Menores"
+    },
+    {
+        "partida": "39100",
+        "categoria": "Material de Limpieza e Higiene"
+    },
+    {
+        "partida": "39500",
+        "categoria": "Utiles de Escritorio"
+    },
+    {
+        "partida": "39600",
+        "categoria": "Utiles Educacionales"
+    },
+    {
+        "partida": "39700",
+        "categoria": "Utiles y Materiales Eléctricos"
+    }
+]

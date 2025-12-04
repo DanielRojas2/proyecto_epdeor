@@ -1,0 +1,64 @@
+.listado-materiales {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.material-item {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.material-item:last-child {
+    border-bottom: none;
+}
+
+.material-item:hover {
+    background-color: #f8f9fa;
+}
+
+.material-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.material-descripcion {
+    flex: 1;
+    min-width: 200px;
+}
+
+.material-detalles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.material-stock {
+    min-width: 150px;
+}
+
+.material-acciones {
+    display: flex;
+    gap: 0.5rem;
+    min-width: 180px;
+}
+
+.input-cantidad {
+    width: 80px;
+}
+
+@media (max-width: 768px) {
+    .material-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .material-acciones {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

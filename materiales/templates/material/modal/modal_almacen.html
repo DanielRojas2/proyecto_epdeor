@@ -1,0 +1,31 @@
+<div class="modal fade" id="modalAlmacen" tabindex="-1" aria-labelledby="modalAlmacenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #112D4E;">
+                <h5 class="modal-title" id="modalAlmacenLabel">Registrar Almacén</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="almacen_nro" class="form-label">Nro. Almacén</label>
+                    <input type="number" class="form-control" id="almacen_nro" min="1" max="10" required>
+                    <div class="invalid-feedback">El número de almacén es requerido</div>
+                </div>
+                <div class="mb-3">
+                    <label for="almacen_descripcion" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="almacen_descripcion" required>
+                    <div class="invalid-feedback">La descripción es requerida</div>
+                </div>
+                <div class="mb-3">
+                    <label for="almacen_ubicacion" class="form-label">Ubicación</label>
+                    <textarea class="form-control" id="almacen_ubicacion" rows="3" required></textarea>
+                    <div class="invalid-feedback">La ubicación es requerida</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarAlmacen">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

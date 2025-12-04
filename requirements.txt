@@ -1,0 +1,6 @@
+django
+pillow
+psycopg2
+PyPDF2
+xhtml2pdf
+reportlab

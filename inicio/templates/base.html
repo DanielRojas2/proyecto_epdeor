@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+{% load static %}
+{% load roles_tags %}
+
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Empresa Pública Departamental de Oruro</title>
+    <link rel="shortcut icon" href="{% static 'assets/epdeor.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/faicons/css/all.min.css' %}">
+    {% block styles %}{% endblock %}
+</head>
+
+<body style="background-color: #e3e4dc;">
+    <div class="container-fluid px-0">
+        <div class="row g-0">
+            <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center bg-dark"
+                style="background:#0e2d56 !important;">
+                <a href="{% url 'inicio:inicio' %}" class="text-decoration-none text-center">
+                    <h1 class="m-0 fw-bold" style="font-size:48px; color:#cccccc; letter-spacing:1px;">
+                        EPDEOR
+                    </h1>
+                </a>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="row bg-white border-bottom d-none d-lg-flex align-items-center" style="--bs-gutter-x:none;">
+                    <div class="col-lg-7 d-flex align-items-center ps-4">
+                        <div class="d-flex align-items-center me-4 gap-1">
+                            <i class="far fa-user"></i>
+                            &nbsp; <strong>{{ user.username }}</strong>, Bienvenido a EPDEOR
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 d-flex justify-content-end pe-4">
+                        <div class="d-flex gap-2">
+                            <div class="d-flex align-items-center m-2">
+                                <form action="{% url 'cerrar_sesion' %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-quote" type="submit">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Cerrar Sesión
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="navbar navbar-expand-lg bg-white navbar-light py-0">
+                    <div class="container-fluid px-4">
+                        <a href="{% url 'inicio:inicio' %}" class="navbar-brand d-lg-none fw-bold"
+                            style="color:#0e2d56;">
+                            EPDEOR
+                        </a>
+                        <button class="navbar-toggler m-2" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarCollapse">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                            <div class="navbar-nav mx-auto">
+                                <a href="{% url 'inicio:inicio' %}"
+                                    class="nav-link {% if request.path == '/' %}active{% endif %}">
+                                    Inicio
+                                </a>
+                                <a href="#" class="nav-link">Solicitar Material</a>
+                                <a href="#" class="nav-link">Mis Solicitudes</a>
+                                {% if request.user|tiene_rol:"administrador" %}
+                                <a href="#" class="nav-link">Atender Solicitud</a>
+                                {% endif %}
+                                {% if request.user|tiene_rol:"encargado activos fijos y almacen" %}
+                                <a href="#" class="nav-link">Entregar Material</a>
+                                <a
+                                    href="{% url 'materiales:material' %}"
+                                    class="nav-link {% if request.path == '/materiales/' %}active{% endif %}"
+                                >
+                                    Materiales
+                                </a>
+                                {% endif %}
+                                {% if request.user|tiene_rol:"administrador" %}
+                                <div class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" id="solicitudesDropdown" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Informes
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="solicitudesDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="kardex.html">
+                                                Kardex Material
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="reporte_solicitud.html">
+                                                Reporte de Solicitudes
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="saldos_minimos.html">
+                                                Stock Mínimo de Material
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                {% if request.user|tiene_rol:"sisadmin" %}
+                                <a href="{% url 'usuarios' %}" class="nav-link {% if request.path == '/personal/' %}active{% endif %}">Personal</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    {% block modal %}{% endblock %}
+    {% block toast %}{% endblock %}
+
+    <script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/js/jquery.min.js' %}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

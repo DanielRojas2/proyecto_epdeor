@@ -1,0 +1,14 @@
+pip install -r requirements.txt
+
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py poblar_departamentos "personal\fixtures\departamentos.json"
+python manage.py poblar_unidades "personal\fixtures\unidades.json"
+python manage.py poblar_roles "personal\fixtures\roles.json"
+python manage.py poblar_cargos "personal\fixtures\cargos.json"
+
+python manage.py cargar_materiales_partidas
+
+python manage.py createsuperuser
+python manage.py runserver

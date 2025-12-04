@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingreso {{ ingreso.nro_ingreso }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+        }
+        h1, h2, h3 {
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+        .datos-ingreso, .datos-proveedor, .datos-almacen {
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 4px;
+            font-size: 11px;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .small {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Reporte de Ingreso de Material</h2>
+        <div class="small" style="margin-top: 7px;">
+            Nro. Ingreso: <strong>{{ ingreso.nro_ingreso }}</strong> |
+            Fecha: <strong>{{ ingreso.fecha_ingreso }}</strong>
+        </div>
+    </div>
+
+    <div class="datos-ingreso">
+        <div class="section-title">Datos de Ingreso</div>
+        <p>
+            <strong>Factura:</strong> {{ ingreso.factura }}<br>
+            <strong>H/Ruta:</strong> {{ ingreso.h_ruta }}<br>
+            <strong>Orden de compra:</strong> {{ ingreso.orden_compra }}
+        </p>
+    </div>
+
+    <div class="datos-proveedor">
+        <div class="section-title">Proveedor</div>
+        <p>
+            <strong>Nombre:</strong> {{ ingreso.proveedor.proveedor }}<br>
+            <strong>NIT:</strong> {{ ingreso.proveedor.nit }}
+        </p>
+    </div>
+
+    <div class="datos-almacen">
+        <div class="section-title">Almacén</div>
+        <p>
+            <strong>Nro. Almacén:</strong> {{ ingreso.almacen.nro_almacen }}<br>
+            <strong>Descripción:</strong> {{ ingreso.almacen.descripcion }}<br>
+            <strong>Ubicación:</strong> {{ ingreso.almacen.ubicacion }}
+        </p>
+    </div>
+
+    <div class="section-title">Materiales Ingresados</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Código</th>
+                <th style="width: 35%;">Descripción</th>
+                <th style="width: 10%;">Unidad</th>
+                <th style="width: 10%;">Volumen</th>
+                <th style="width: 10%;">Cant. Ingreso</th>
+                <th style="width: 10%;">Cant. x Unidad</th>
+                <th style="width: 10%;">Total Existencias (+)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in materiales_ingresados %}
+            <tr>
+                <td>{{ item.material.codigo_material }}</td>
+                <td>{{ item.material.descripcion }}</td>
+                <td>{{ item.material.unidad_ingreso }}</td>
+                <td>{{ item.material.volumen }}</td>
+                <td class="text-right">{{ item.cantidad }}</td>
+                <td class="text-right">{{ item.material.cantidad_x_unidad_ingreso }}</td>
+                <td class="text-right">
+                    {{ item.cantidad|add:"0"|floatformat:0|default:"0" }}
+                    × {{ item.material.cantidad_x_unidad_ingreso }} 
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No hay materiales registrados en este ingreso.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="small" style="margin-top: 15px;">
+        Generado el {{ ingreso.creado }}.
+    </p>
+</body>
+</html>

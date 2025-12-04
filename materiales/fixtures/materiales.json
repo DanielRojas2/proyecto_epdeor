@@ -1,0 +1,122 @@
+[
+    {
+        "codigo_material": "",
+        "descripcion": "Archivador de palanca lomo entero marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "paquete",
+        "cantidad_x_unidad_ingreso": 4,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Bolígrafo azul marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "caja",
+        "cantidad_x_unidad_ingreso": 12,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Bolígrafo azul micropunta marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "caja",
+        "cantidad_x_unidad_ingreso": 12,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Lápiz negro HB Faber Castell marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "caja",
+        "cantidad_x_unidad_ingreso": 12,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Borrador de tinta marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "unidad",
+        "cantidad_x_unidad_ingreso": 1,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Marcador permanente trazo grueso marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "caja",
+        "cantidad_x_unidad_ingreso": 12,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Resaltador trazo grueso de diferentes colores marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "caja",
+        "cantidad_x_unidad_ingreso": 12,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Cuaderno con espiral tamaño carta de 200 hojas marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "unidad",
+        "cantidad_x_unidad_ingreso": 1,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Cuaderno de Actas tamaño oficio marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "unidad",
+        "cantidad_x_unidad_ingreso": 1,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    },
+    {
+        "codigo_material": "",
+        "descripcion": "Cinta de embalaje 100 yardas marca reconocida",
+        "cantidad_minima": 10,
+        "cantidad_existente": 0,
+        "unidad_ingreso": "unidad",
+        "cantidad_x_unidad_ingreso": 1,
+        "volumen": "N/A",
+        "unidad_salida": "unidad",
+        "tipo_material": "material de escritorio",
+        "partida": 8
+    }
+]

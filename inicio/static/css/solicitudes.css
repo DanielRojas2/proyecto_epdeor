@@ -1,0 +1,38 @@
+/* Estilos personalizados para el módulo de solicitudes */
+.border-left-warning {
+    border-left: 4px solid #ffc107 !important;
+}
+
+.border-left-success {
+    border-left: 4px solid #198754 !important;
+}
+
+.border-left-danger {
+    border-left: 4px solid #dc3545 !important;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+}
+
+.toast-container {
+    z-index: 9999;
+}
+
+/* Animaciones para los badges */
+.badge {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para los inputs de cantidad */
+.input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/* Mejoras visuales para las cards de materiales */
+.card-border-highlight {
+    border: 2px solid #0d6efd !important;
+    background-color: #f8f9ff !important;
+}

@@ -1,0 +1,141 @@
+<div class="modal fade" id="modalIngresoMaterial" tabindex="-1" aria-labelledby="modalIngresoMaterialLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #112D4E;">
+                <h3 class="modal-title fs-5" id="modalAlmacenLabel">Registrar Material</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formMaterial">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <input type="text" class="form-control" id="descripcion" placeholder="Nombre de material, detalles, etc." required>
+                        </div>
+                        <div class="col-lg-6 mb-3">
+                            <label for="selectPartida" class="form-label">Partida</label>
+                            <div class="d-flex gap-2">
+                                <select class="form-select" id="selectPartida" required>
+                                    <option value="" selected disabled>Seleccionar partida...</option>
+                                    <!-- Las opciones se cargarán dinámicamente -->
+                                </select>
+                                <button type="button" class="btn btn-outline-secondary" id="btnAbrirModalPartida">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="cantidad_minima" class="form-label">Cantidad Mínima</label>
+                            <input type="number" class="form-control" id="cantidad_minima" placeholder="1 - 30" required min="1" max="100">
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="unidad_ingreso" class="form-label">Unidad de Ingreso</label>
+                            <select class="form-select" aria-label="Unidad de Ingreso" id="unidad_ingreso" required>
+                                <option value="" selected disabled>Seleccionar Unidad de Ingreso</option>
+                                <option value="Paquete">Paquete</option>
+                                <option value="Caja">Caja</option>
+                                <option value="Unidad">Unidad</option>
+                                <option value="Tambor">Tambor</option>
+                                <option value="Block">Block</option>
+                                <option value="Bolsa">Bolsa</option>
+                                <option value="Pieza">Pieza</option>
+                                <option value="Balde">Balde</option>
+                                <option value="Botella">Botella</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="cantidad_x_unidad_ingreso" class="form-label">
+                                Cantidad x Unidad de Ingreso
+                            </label>
+                            <input type="number" class="form-control" id="cantidad_x_unidad_ingreso" placeholder="1 - 1000" required min="1" max="1000">
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="volumen" class="form-label">Volumen</label>
+                            <select class="form-select" aria-label="Volumen" id="volumen" required>
+                                <option value="N/A" selected>--Volumen N/A--</option>
+                                <option value="Litro">Litro</option>
+                                <option value="M.L">M.L</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="unidad_salida" class="form-label">Unidad de Salida</label>
+                            <select class="form-select" aria-label="Unidad de Ingreso" id="unidad_salida" required>
+                                <option value="" selected disabled>Seleccionar Unidad de Salida</option>
+                                <option value="Paquete">Paquete</option>
+                                <option value="Caja">Caja</option>
+                                <option value="Unidad">Unidad</option>
+                                <option value="Tambor">Tambor</option>
+                                <option value="Block">Block</option>
+                                <option value="Bolsa">Bolsa</option>
+                                <option value="Pieza">Pieza</option>
+                                <option value="Caja Pequeña">Caja Pequeña</option>
+                                <option value="Balde">Balde</option>
+                                <option value="Botella">Botella</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <label for="tipo_material" class="form-label">Tipo de Material</label>
+                            <select class="form-select" aria-label="Tipo de Material" id="tipo_material" required>
+                                <option value="" selected disabled>Tipo de Material</option>
+                                <option value="material de escritorio">Material de Escritorio</option>
+                                <option value="material de limpieza">Material de Limpieza</option>
+                                <option value="material de mantenimiento">Material de Mantenimiento</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarMaterial">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('keydown', function(e) {
+        const teclasProhibidas = ['-', '.', ',', 'e', '+'];
+
+        if (teclasProhibidas.includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    input.addEventListener('input', function() {
+        this.value = this.value.replace(/[-.,e+]/g, '');
+
+        if (parseFloat(this.value) < 0) {
+            this.value = '';
+        }
+    });
+});
+
+document.querySelectorAll('input[type="date"]').forEach(input => {
+    const hoy = new Date();
+    const max5anios = new Date();
+    max5anios.setFullYear(hoy.getFullYear() + 5);
+
+    input.max = hoy.toISOString().split("T")[0];
+
+    input.addEventListener('change', function() {
+        const fechaIngresada = new Date(this.value);
+
+        if (fechaIngresada > hoy) {
+            alert("La fecha no puede ser mayor a la fecha actual.");
+            this.value = "";
+            return;
+        }
+
+        if (fechaIngresada > max5anios) {
+            alert("La fecha no puede ser mayor a 5 años desde hoy.");
+            this.value = "";
+            return;
+        }
+    });
+});
+</script>
