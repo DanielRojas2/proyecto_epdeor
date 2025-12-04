@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle Solicitud {{ solicitud.codigo_solicitud }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .header-info {
+            margin-bottom: 10px;
+            font-size: 10px;
+        }
+        .header-info span {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 4px;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h2>DETALLE DE SOLICITUD DE MATERIAL</h2>
+
+    <div class="header-info">
+        <span><strong>Código Solicitud:</strong> {{ solicitud.codigo_solicitud }}</span>
+        <span><strong>Estado:</strong> {{ solicitud.estado_solicitud }}</span>
+        <span><strong>Fecha:</strong> {{ solicitud.fecha_solicitud }} {{ solicitud.hora_solicitud }}</span>
+        {% if personal %}
+        <span><strong>Solicitante:</strong> {{ personal.nombre }} {{ personal.apellido_paterno }} {{ personal.apellido_materno }}</span>
+        {% endif %}
+        {% if solicitud.dirigido_a %}
+        <span><strong>Dirigido a:</strong> {{ solicitud.dirigido_a.nombre }} {{ solicitud.dirigido_a.apellido_paterno }} {{ solicitud.dirigido_a.apellido_materno }}</span>
+        {% endif %}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Código</th>
+                <th style="width: 45%;">Descripción</th>
+                <th style="width: 10%;">Unidad</th>
+                <th style="width: 10%;">Stock Reservado</th>
+                <th style="width: 10%;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d.material.codigo_material }}</td>
+                <td>{{ d.material.descripcion }}</td>
+                <td>{{ d.material.unidad_salida }}</td>
+                <td class="text-right">{{ d.cantidad_solicitada }}</td>
+                <td>{{ d.estado_detalle }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay materiales en esta solicitud.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

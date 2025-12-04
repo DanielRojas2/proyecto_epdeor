@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Solicitar Material{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/custom/listado_material.css' %}">
+<style>
+    .filtros-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .material-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+    .material-item:hover {
+        background-color: #f8f9fa;
+        border-left-color: #007bff;
+        transform: translateX(5px);
+    }
+
+    .material-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .material-descripcion {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .material-detalles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .material-stock {
+        min-width: 150px;
+        font-weight: 500;
+    }
+
+    .material-acciones {
+        display: flex;
+        gap: 0.5rem;
+        min-width: 180px;
+    }
+
+    .input-cantidad {
+        width: 80px;
+    }
+
+    .badge-tipo {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    .card-materiales {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 600px;
+        /* Altura fija para el card */
+    }
+
+    .card-materiales .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+        flex-shrink: 0;
+        /* Evita que el header se encoja */
+    }
+
+    .card-materiales .card-body {
+        padding: 0;
+        flex: 1;
+        /* Ocupa el espacio restante */
+        overflow: hidden;
+        /* Evita desbordamiento */
+        display: flex;
+        flex-direction: column;
+    }
+
+    #listado-materiales {
+        flex: 1;
+        overflow-y: auto;
+        /* Scroll vertical cuando sea necesario */
+        max-height: 100%;
+        /* Máxima altura disponible */
+    }
+
+    /* Personalización del scrollbar */
+    #listado-materiales::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #listado-materiales::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    #listado-materiales::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    #listado-materiales::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    .no-resultados {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+    }
+
+    /* Card del carrito también con altura fija */
+    .card-carrito {
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-carrito .card-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+        .material-info {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .material-acciones {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .card-materiales {
+            height: 500px;
+            /* Altura menor en móviles */
+        }
+
+        .card-carrito {
+            height: auto;
+            /* Altura automática en móviles */
+            margin-top: 1rem;
+        }
+    }
+
+    @media (max-height: 800px) {
+        .card-materiales {
+            height: 500px;
+            /* Altura menor en pantallas pequeñas */
+        }
+
+        .card-carrito {
+            height: 500px;
+        }
+    }
+
+    /* Estilos para el estado de carga */
+    .cargando {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-2 mb-3">
+    <!-- Filtros y búsqueda -->
+    <div class="filtros-container">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="buscadorMaterial" class="form-label">Buscar material</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" id="buscadorMaterial" class="form-control"
+                        placeholder="Buscar por código o descripción...">
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="filtroTipo" class="form-label">Filtrar por tipo de material</label>
+                <select id="filtroTipo" class="form-select">
+                    <option value="">Todos los tipos</option>
+                    <option value="material de escritorio">Material de Escritorio</option>
+                    <option value="material de limpieza">Material de Limpieza</option>
+                    <option value="material de mantenimiento">Material de Mantenimiento</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted" id="contadorMateriales">
+                Mostrando {{ materiales|length }} materiales
+            </small>
+            <button id="btnLimpiarFiltros" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-times me-1"></i>Limpiar filtros
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-12">
+            <div class="card card-materiales">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Materiales Disponibles</h5>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary me-2" id="materialesFiltrados">{{ materiales|length }}</span>
+                        <span>materiales</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="listado-materiales">
+                        {% for m in materiales %}
+                        <div class="material-item" data-id="{{ m.id }}" data-tipo="{{ m.tipo_material }}"
+                            data-codigo="{{ m.codigo|default:'' }}" data-descripcion="{{ m.descripcion|lower }}">
+                            <div class="material-info">
+                                <div class="material-descripcion">
+                                    <h5 class="mb-1">{{ m.descripcion }}</h5>
+                                    <div class="material-detalles">
+                                        <span>Partida: {{ m.partida.partida }} - {{ m.partida.categoria }}</span>
+                                        <span>{{ m.tipo_material }}</span>
+                                        {% if m.codigo %}
+                                        <span class="text-muted">Código: {{ m.codigo }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="material-stock">
+                                    <span>Stock disponible: <strong id="stock-{{ m.id }}">{{ m.cantidad_existente }}</strong></span>
+                                </div>
+                                <div class="material-acciones">
+                                    <div class="input-group">
+                                        <input type="number" min="1" max="{{ m.cantidad_existente }}" value="1"
+                                            id="cantidad-{{ m.id }}" class="form-control input-cantidad">
+                                        <button class="btn btn-primary btnAgregar" data-id="{{ m.id }}">
+                                            <i class="fas fa-plus me-1"></i>Agregar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="no-resultados">
+                            <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+                            <p>No hay materiales disponibles en este momento.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-12">
+            <div class="card card-carrito">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Detalles de Solicitud</h4>
+                </div>
+                <div id="carrito-area" class="card-body">
+                    <!-- carrito parcial cargado por AJAX -->
+                    <div class="p-3 text-center text-muted">
+                        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                        <p>No hay materiales en la solicitud</p>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button id="btnGenerarSolicitud" class="btn btn-success">
+                        <i class="fas fa-file-alt me-2"></i>Solicitar Material
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmarSolicitud" tabindex="-1" aria-labelledby="modalConfirmarSolicitudLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarSolicitudLabel">
+                    Confirmar solicitud de material
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Por favor, revise el detalle de la solicitud antes de confirmarla:</p>
+                <div class="alert alert-info py-2 mb-2">
+                    <small>Los materiales listados abajo serán reservados del stock disponible.</small>
+                </div>
+                <div id="modalConfirmarCarrito">
+                    <!-- Aquí se copiará el contenido del carrito -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarSolicitud">
+                    <i class="fas fa-check me-1"></i> Confirmar solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="toastSolicitud" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <strong class="me-auto">Solicitud generada</strong>
+            <small>Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toastSolicitudMessage">
+            Tu solicitud fue generada exitosamente.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/solicitudes/solicitar_material.js' %}"></script>
+
+<script>
+document.addEventListener("input", function (e) {
+    if (!e.target.classList.contains("cantidad-item")) return;
+
+    const input = e.target;
+    const max = parseInt(input.getAttribute("max"));
+    const min = 1;
+
+    // Eliminar caracteres inválidos
+    input.value = input.value.replace(/[^0-9]/g, "");
+
+    let val = parseInt(input.value);
+
+    if (!val || val < min) {
+        input.value = min;
+        return;
+    }
+
+    if (val > max) {
+        input.value = max;
+        return;
+    }
+});
+
+// Bloquear teclas inválidas
+document.addEventListener("keydown", function (e) {
+    if (!e.target.classList.contains("cantidad-item")) return;
+
+    const invalid = ["-", ".", ",", "e", "E"];
+    if (invalid.includes(e.key)) {
+        e.preventDefault();
+    }
+});
+
+// Bloquear que escriban más que el máximo
+document.addEventListener("keypress", function (e) {
+    if (!e.target.classList.contains("cantidad-item")) return;
+
+    const input = e.target;
+    const max = parseInt(input.getAttribute("max"));
+
+    if (!/[0-9]/.test(e.key)) {
+        e.preventDefault();
+        return;
+    }
+
+    const newValue = input.value + e.key;
+    if (parseInt(newValue) > max) {
+        e.preventDefault();
+    }
+});
+</script>
+
+
+{% endblock %}

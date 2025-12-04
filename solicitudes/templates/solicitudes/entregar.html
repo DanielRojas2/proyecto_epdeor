@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Entregar Material - {{ solicitud.codigo_solicitud }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header de la solicitud -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3><i class="fas fa-dolly me-2"></i>Entrega de Material</h3>
+            <p class="text-muted mb-0">Solicitud: {{ solicitud.codigo_solicitud }}</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-primary fs-6">Aprobada</span>
+            <p class="text-muted mb-0 small">{{ solicitud.fecha_solicitud|date:"d/m/Y" }} - {{ solicitud.hora_solicitud|time:"H:i" }}</p>
+        </div>
+    </div>
+
+    <!-- Alertas de stock -->
+    {% if materiales_sin_stock %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Stock Insuficiente</h5>
+        <p class="mb-2">Los siguientes materiales no tienen stock suficiente:</p>
+        <ul class="mb-0">
+            {% for material in materiales_sin_stock %}
+            <li>
+                <strong>{{ material.material }}</strong>: 
+                Solicitado: {{ material.solicitado }}, Disponible: {{ material.disponible }}
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+
+    <!-- Información del solicitante -->
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Información del Solicitante</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label text-muted small mb-1">Nombre Completo</label>
+                    <p class="fw-bold mb-0">{{ solicitante.nombre }} {{ solicitante.apellido_paterno }}</p>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small mb-1">Cargo</label>
+                    <p class="mb-0">{{ solicitante.cargo.cargo }}</p>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small mb-1">Unidad</label>
+                    <p class="mb-0">{{ solicitante.cargo.unidad.unidad }}</p>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small mb-1">Estado</label>
+                    <p class="mb-0"><span class="badge bg-primary">{{ solicitud.estado_solicitud|upper }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de entrega -->
+    <form id="form-entrega">
+        {% csrf_token %}
+        
+        <!-- Materiales a entregar -->
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-boxes me-2"></i>Materiales a Entregar</h5>
+                <span class="badge bg-secondary">{{ entregas|length }} materiales</span>
+            </div>
+            <div class="card-body">
+                {% for e in entregas %}
+                <div class="material-item border-bottom pb-3 mb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ e.detalle.material.descripcion }}</h6>
+                            <small class="text-muted">Código: {{ e.detalle.material.codigo_material }}</small>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-muted small mb-1">Solicitado</label>
+                            <p class="fw-bold mb-0">{{ e.detalle.cantidad_solicitada }} {{ e.detalle.material.unidad_salida }}</p>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-muted small mb-1">Disponible</label>
+                            <p class="mb-0 {% if e.tiene_stock_suficiente %}text-success{% else %}text-danger{% endif %}">
+                                <strong>{{ e.total_disponible }} {{ e.detalle.material.unidad_salida }}</strong>
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small mb-1">Cantidad a Entregar</label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       class="form-control cantidad-entrega" 
+                                       name="cantidad_{{ e.detalle.id }}"
+                                       value="{{ e.max_entregable }}"
+                                       min="0" 
+                                       max="{{ e.max_entregable }}"
+                                       {% if not e.tiene_stock_suficiente %}disabled{% endif %}>
+                                <span class="input-group-text">{{ e.detalle.material.unidad_salida }}</span>
+                            </div>
+                            <div class="feedback-cantidad mt-1">
+                                {% if not e.tiene_stock_suficiente %}
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    Stock insuficiente
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detalles de lotes disponibles -->
+                    {% if e.disponibles %}
+                    <div class="mt-2">
+                        <small class="text-muted">Lotes disponibles:</small>
+                        <div class="d-flex flex-wrap gap-2 mt-1">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'solicitudes:entregas' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Volver
+            </a>
+            
+            <div>
+                <button type="button" class="btn btn-info me-2" onclick="validarStock()">
+                    <i class="fas fa-check-circle me-1"></i>Validar Stock
+                </button>
+                
+                <button type="button" 
+                        class="btn btn-success {% if not puede_entregar %}disabled{% endif %}"
+                        onclick="registrarEntregaGlobal({{ solicitud.id }})"
+                        {% if not puede_entregar %}disabled{% endif %}>
+                    <i class="fas fa-clipboard-check me-1"></i>Registrar Entrega
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/solicitudes/entrega_material.js' %}"></script>
+<script src="{% static 'js/toasts.js' %}"></script>
+
+<script>
+function validarStock() {
+    // Implementar validación de stock en tiempo real
+    alert('Validación de stock implementada aquí');
+}
+</script>
+{% endblock %}

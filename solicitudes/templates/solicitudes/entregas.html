@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Solicitudes Para Entregar{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3><i class="fas fa-truck-loading me-2"></i>Solicitudes Aprobadas para Entrega</h3>
+        <span class="badge bg-primary fs-6">{{ solicitudes|length }} solicitudes</span>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if solicitudes %}
+        <div class="row">
+            {% for s in solicitudes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <strong>Solicitud {{ s.codigo_solicitud }}</strong>
+                        <span class="badge {% if s.puede_entregarse %}bg-success{% else %}bg-warning{% endif %}">
+                            {% if s.puede_entregarse %}Lista para entrega{% else %}Stock insuficiente{% endif %}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Solicitante:</small>
+                            <p class="mb-1 fw-bold">{{ s.creado_por.personal.nombre }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Unidad:</small>
+                            <p class="mb-1">{{ s.creado_por.personal.cargo.cargo }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Fecha y Hora:</small>
+                            <p class="mb-1">{{ s.fecha_solicitud|date:"d/m/Y" }} - {{ s.hora_solicitud|time:"H:i" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">Materiales solicitados:</small>
+                            <p class="mb-1 fw-bold">{{ s.total_materiales }} materiales</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'solicitudes:entregar' s.id %}" 
+                               class="btn {% if s.puede_entregarse %}btn-success{% else %}btn-warning{% endif %}">
+                                <i class="fas fa-clipboard-check me-1"></i>
+                                {% if s.puede_entregarse %}Registrar Entrega{% else %}Ver Detalles{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No hay solicitudes aprobadas para entrega</h4>
+            <p class="text-muted">Todas las solicitudes aprobadas han sido procesadas o están en espera de aprobación.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

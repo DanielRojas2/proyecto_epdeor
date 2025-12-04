@@ -67,7 +67,7 @@
                                     class="nav-link {% if request.path == '/' %}active{% endif %}">
                                     Inicio
                                 </a>
-                                <a href="#" class="nav-link">Solicitar Material</a>
+                                <a href="{% url 'solicitudes:solicitar_material' %}" class="nav-link">Solicitar Material</a>
                                 <a href="#" class="nav-link">Mis Solicitudes</a>
                                 {% if request.user|tiene_rol:"administrador" %}
                                 <a href="#" class="nav-link">Atender Solicitud</a>

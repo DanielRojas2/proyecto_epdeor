@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nota interna {{ solicitud.codigo_solicitud }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .small {
+            font-size: 10px;
+        }
+        .contenido {
+            white-space: pre-wrap;
+            margin-top: 15px;
+        }
+        .cabecera {
+            margin-bottom: 5px;
+        }
+        .cabecera span {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h2>NOTA INTERNA</h2>
+    <div class="cabecera small">
+        <span><strong>Código Solicitud:</strong> {{ solicitud.codigo_solicitud }}</span>
+        <span><strong>Fecha:</strong> {{ solicitud.fecha_solicitud }}</span>
+        <span><strong>Hora:</strong> {{ solicitud.hora_solicitud }}</span>
+        {% if personal %}
+        <span><strong>Solicitante:</strong> {{ personal.nombre }} {{ personal.apellido_paterno }} {{ personal.apellido_materno }}</span>
+        {% endif %}
+    </div>
+
+    <div class="contenido">
+        {{ solicitud.observación|default_if_none:""|linebreaksbr }}
+    </div>
+</body>
+</html>

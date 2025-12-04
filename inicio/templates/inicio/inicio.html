@@ -4,7 +4,115 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-hola
+<div class="row g-4 mt-4 justify-content-center">
+    <div class="col-md-4">
+        <div class="info-card">
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-8 col-8">
+                    <h5 class="mb-1">Mis solicitudes</h5>
+                    <p class="mb-0">Mira las solicitudes que realizaste.</p>
+                </div>
+                <div class="col-lg-4 col-md-4 col-4 text-end">
+                    <!-- Enlace que baja a la sección de listado -->
+                    <a href="#mis-solicitudes" class="icon-btn">
+                        <i class="fas fa-list-ul"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="info-card">
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-8 col-8">
+                    <h5 class="mb-1">Solicitar Material</h5>
+                    <p class="mb-0">Dale click a la herramienta y empieza a solicitar material</p>
+                </div>
+                <div class="col-lg-4 col-md-4 col-4 text-end">
+                    <!-- Enlace al flujo de solicitud -->
+                    <a href="{% url 'solicitudes:solicitar_material' %}" class="icon-btn">
+                        <i class="fas fa-tools"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <hr class="mt-5">
+
+    <div class="row mt-3" id="mis-solicitudes">
+        <div class="col-12">
+            <h4 class="mb-3">
+                <i class="fas fa-history"></i> Últimas 5 Solicitudes Realizadas
+            </h4>
+
+            {% if solicitudes %}
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Estado</th>
+                            <th>Dirigido a</th>
+                            <th class="text-center">Nota interna</th>
+                            <th class="text-center">Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in solicitudes %}
+                        <tr>
+                            <td>{{ s.codigo_solicitud }}</td>
+                            <td>{{ s.fecha_solicitud }}</td>
+                            <td>{{ s.hora_solicitud|time:"H:i" }}</td>
+                            <td>
+                                {% if s.estado_solicitud == "pendiente" %}
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                {% elif s.estado_solicitud == "aprobada" %}
+                                    <span class="badge bg-success">Aprobada</span>
+                                {% elif s.estado_solicitud == "rechazada" %}
+                                    <span class="badge bg-danger">Rechazada</span>
+                                {% elif s.estado_solicitud == "finalizada" %}
+                                    <span class="badge bg-secondary">Finalizada</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">{{ s.estado_solicitud }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if s.dirigido_a %}
+                                    {{ s.dirigido_a.nombre }} {{ s.dirigido_a.apellido_paterno }} {{ s.dirigido_a.apellido_materno }}
+                                {% else %}
+                                    <span class="text-muted">Sin destinatario</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'solicitudes:nota_pdf' s.id %}" target="_blank"
+                                class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-file-alt me-1"></i>Nota
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'solicitudes:detalle_pdf' s.id %}" target="_blank"
+                                class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-list me-1"></i>Detalle
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Aún no realizaste ninguna solicitud de material.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}{% endblock %}

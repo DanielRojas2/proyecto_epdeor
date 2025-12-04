@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Solicitudes Pendientes{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3><i class="fas fa-clock text-warning me-2"></i>Solicitudes Pendientes</h3>
+        <span class="badge bg-warning text-dark fs-6">{{ solicitudes|length }} pendiente{{ solicitudes|pluralize }}</span>
+    </div>
+
+    {% if solicitudes %}
+        <div class="row">
+            {% for s in solicitudes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-left-warning shadow-sm h-100">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0 text-dark">
+                                <i class="fas fa-file-alt me-2"></i>{{ s.codigo_solicitud }}
+                            </h6>
+                            <span class="badge bg-warning">Pendiente</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Solicitante</small>
+                            <p class="mb-1 fw-semibold">
+                                <i class="fas fa-user me-2"></i>
+                                {{ s.creado_por.personal.nombre }} {{ s.creado_por.personal.apellido_paterno }}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Fecha</small>
+                            <p class="mb-1 fw-semibold">
+                                <i class="fas fa-calendar me-2"></i>
+                                {{ s.fecha_creacion|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Prioridad</small>
+                            <p class="mb-1 fw-semibold">
+                                <i class="fas fa-flag me-2"></i>
+                                {{ s.prioridad|default:"Normal"|capfirst }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'solicitudes:atender' s.id %}" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-tasks me-2"></i>Atender Solicitud
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-check-circle fa-4x text-success opacity-50"></i>
+            </div>
+            <h4 class="text-muted mb-3">No hay solicitudes pendientes</h4>
+            <p class="text-muted">Todas las solicitudes dirigidas a ti han sido atendidas.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

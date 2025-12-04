@@ -1,5 +1,17 @@
 // static/js/solicitudes/solicitar_material.js
 $(function(){
+    function mostrarToastSolicitud(mensaje) {
+        const toastEl = document.getElementById("toastSolicitud");
+        const msgEl = document.getElementById("toastSolicitudMessage");
+
+        if (!toastEl || !msgEl) return;
+
+        msgEl.textContent = mensaje;
+
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== "") {
@@ -72,20 +84,60 @@ $(function(){
             });
     });
 
+    // =========================
+    // 1) MOSTRAR MODAL CONFIRMACIÓN
+    // =========================
+    let generando = false;
+    const modalConfirmar = new bootstrap.Modal(document.getElementById("modalConfirmarSolicitud"));
+
     $("#btnGenerarSolicitud").on("click", function(){
-        // Generar solicitud
+        // Copiamos el contenido actual del carrito al modal
+        const contenidoCarrito = $("#carrito-area").html().trim();
+
+        if (!contenidoCarrito || contenidoCarrito.length === 0 || /No hay materiales en la solicitud/i.test(contenidoCarrito)) {
+            if (window.mostrarToast) {
+                window.mostrarToast("Aviso", "No hay materiales en la solicitud", "warning");
+            } else {
+                alert("No hay materiales en la solicitud");
+            }
+            return;
+        }
+
+        $("#modalConfirmarCarrito").html(contenidoCarrito);
+        // deshabilitar inputs/botones en el resumen del modal para que sea solo lectura
+        $("#modalConfirmarCarrito").find("input, button").prop("disabled", true);
+
+        modalConfirmar.show();
+    });
+
+    // =========================
+    // 2) CONFIRMAR Y GENERAR SOLICITUD (AJAX)
+    // =========================
+    $("#btnConfirmarSolicitud").on("click", function(){
+        if (generando) return;
+        generando = true;
+
+        const btn = $(this);
+        const originalHtml = btn.html();
+        btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> Generando...');
+        btn.prop("disabled", true);
+
         $.post("/solicitudes/generar/", {})
             .done(function(resp){
                 if (resp.ok){
-                    if (window.mostrarToast) window.mostrarToast("Solicitud", resp.msg, "success");
-                    // mostrar nota en modal simple
-                    const nota = resp.nota || "";
-                    const html = `<div class="modal fade" id="modalNota" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Nota interna - Solicitud ${resp.codigo}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><pre style="white-space:pre-wrap">${nota}</pre></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div></div></div></div>`;
-                    $("body").append(html);
-                    var m = new bootstrap.Modal(document.getElementById("modalNota"));
-                    m.show();
-                    // remover modal del DOM cuando se oculte
-                    $("#modalNota").on("hidden.bs.modal", function(){ $(this).remove(); });
+                    modalConfirmar.hide();
+
+                    if (resp.codigo) {
+                        mostrarToastSolicitud(`Solicitud ${resp.codigo} generada correctamente.`);
+                    } else {
+                        mostrarToastSolicitud(`Solicitud generada correctamente.`);
+                    }
+
+                    setTimeout(() => {
+                        const redirectUrl = resp.redirect_url || "/";
+                        window.location.href = redirectUrl;
+                    }, 2000);
+
                     cargarCarrito();
                 } else {
                     if (window.mostrarToast) window.mostrarToast("Error", resp.error || "No se pudo crear la solicitud", "error");
@@ -94,6 +146,11 @@ $(function(){
             .fail(function(xhr){
                 const msg = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Error al generar solicitud";
                 if (window.mostrarToast) window.mostrarToast("Error", msg, "error");
+            })
+            .always(function(){
+                generando = false;
+                btn.html(originalHtml);
+                btn.prop("disabled", false);
             });
     });
 

@@ -44,6 +44,7 @@ LOCAL_APPS = [
     'personal',
     'inicio',
     'materiales',
+    'solicitudes',
 ]
 
 THIRD_APPS = []
